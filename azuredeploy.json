@@ -17,11 +17,28 @@
         "description": "Specify a location for the resources."
       }
     },
+    "storageSKU": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Standard_ZRS",
+        "Premium_LRS",
+        "Premium_ZRS",
+        "Standard_GZRS",
+        "Standard_RAGZRS"
+      ],
+      "metadata": {
+        "description": "Specify the storage account type."
+      }
+    },
     "linuxFxVersion": {
       "type": "string",
       "defaultValue": "php|7.0",
       "metadata": {
-        "description": "The Runtime stack of current web app"
+        "description": "Specify the Runtime stack of current web app"
       }
     }
   },
@@ -32,22 +49,16 @@
   },
   "resources": [
     {
-      "name": "linkedTemplate",
-      "type": "Microsoft.Resources/deployments",
+      "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2021-04-01",
+      "name": "[variables('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('storageSKU')]"
+      },
+      "kind": "StorageV2",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "relativePath": "linkedStorageAccount.json"
-        },
-        "parameters": {
-          "storageAccountName": {
-            "value": "[variables('storageAccountName')]"
-          },
-          "location": {
-            "value": "[parameters('location')]"
-          }
-        }
+        "supportsHttpsTrafficOnly": true
       }
     },
     {
@@ -90,7 +101,7 @@
   "outputs": {
     "storageEndpoint": {
       "type": "object",
-      "value": "[reference('linkedTemplate').outputs.storageEndpoint.value]"
+      "value": "[reference(variables('storageAccountName')).primaryEndpoints]"
     }
   }
 }
