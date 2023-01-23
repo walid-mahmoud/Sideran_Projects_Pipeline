@@ -2,59 +2,52 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "storageAccountType": {
-            "defaultValue": "Standard_LRS",
-            "allowedValues": [
-                "Premium_LRS",
-                "Premium_ZRS",
-                "Standard_GRS",
-                "Standard_GZRS",
-                "Standard_LRS",
-                "Standard_RAGRS",
-                "Standard_RAGZRS",
-                "Standard_ZRS"
-            ],
+        "storageAccountName": {
             "type": "String",
             "metadata": {
-                "description": "Storage Account type"
+                "description": "Specifies the name of the Azure Storage account."
+            }
+        },
+        "containerPrefix": {
+            "defaultValue": "logs",
+            "type": "String",
+            "metadata": {
+                "description": "Specifies the prefix of the blob container names."
             }
         },
         "location": {
             "defaultValue": "[resourceGroup().location]",
             "type": "String",
             "metadata": {
-                "description": "Location for the storage account."
-            }
-        },
-        "storageAccountName": {
-            "defaultValue": "[format('store{0}', uniqueString(resourceGroup().id))]",
-            "type": "String",
-            "metadata": {
-                "description": "The name of the Storage Account"
+                "description": "Specifies the location in which the Azure Storage resources should be deployed."
             }
         }
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2022-05-01",
+            "apiVersion": "2021-04-01",
             "name": "[parameters('storageAccountName')]",
             "location": "[parameters('location')]",
             "sku": {
-                "name": "[parameters('storageAccountType')]"
+                "name": "Standard_LRS"
             },
             "kind": "StorageV2",
-            "properties": {}
-        }
-    ],
-    "outputs": {
-        "storageAccountName": {
-            "type": "String",
-            "value": "[parameters('storageAccountName')]"
+            "properties": {
+                "accessTier": "Hot"
+            }
         },
-        "storageAccountId": {
-            "type": "String",
-            "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-04-01",
+            "name": "[format('{0}/default/{1}{2}', parameters('storageAccountName'), parameters('containerPrefix'), range(0, 3)[copyIndex()])]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            ],
+            "copy": {
+                "name": "containers",
+                "count": "[length(range(0, 3))]"
+            }
         }
-    }
+    ]
 }
