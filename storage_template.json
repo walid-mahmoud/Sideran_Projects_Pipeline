@@ -45,7 +45,24 @@
             },
             "kind": "StorageV2",
             "properties": {}
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('storageAccountName'), '/default/input')]",
+            "dependsOn": [
+                "[parameters('storageAccountName')]"
+            ]
+        },        
+         {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('storageAccountName'), '/default/input')]",
+            "dependsOn": [
+                "[parameters('ContainerName')]"
+            ]
         }
+   
     ],
     "outputs": {
         "storageAccountName": {
