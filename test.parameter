@@ -1,0 +1,24 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "westeurope"
+        },
+        "storageAccount_name": {
+            "value": "ktblogstorageaccount"
+        },
+        "storageAccount_sku_name": {
+            "value": "Standard_GRS"
+        },
+        "storageAccount_access_tier": {
+            "value": "Cool"
+        },
+        "storageAccount_kind": {
+            "value": "StorageV2"
+        },
+        "storageContainer_name": {
+            "value": "storagecontainerfromarm"
+        }
+    }
+}
