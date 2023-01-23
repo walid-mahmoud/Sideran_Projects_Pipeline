@@ -2,35 +2,24 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "storageAccountType": {
-            "defaultValue": "Standard_LRS",
-            "allowedValues": [
-                "Premium_LRS",
-                "Premium_ZRS",
-                "Standard_GRS",
-                "Standard_GZRS",
-                "Standard_LRS",
-                "Standard_RAGRS",
-                "Standard_RAGZRS",
-                "Standard_ZRS"
-            ],
+        "storageAccountName": {
             "type": "String",
             "metadata": {
-                "description": "Storage Account type"
+                "description": "Specifies the name of the Azure Storage account."
+            }
+        },
+        "containerName": {
+            "defaultValue": "logs",
+            "type": "String",
+            "metadata": {
+                "description": "Specifies the name of the blob container."
             }
         },
         "location": {
             "defaultValue": "[resourceGroup().location]",
             "type": "String",
             "metadata": {
-                "description": "Location for the storage account."
-            }
-        },
-        "storageAccountName": {
-            "defaultValue": "[format('store{0}', uniqueString(resourceGroup().id))]",
-            "type": "String",
-            "metadata": {
-                "description": "The name of the Storage Account"
+                "description": "Specifies the location in which the Azure Storage resources should be deployed."
             }
         }
     },
@@ -41,28 +30,20 @@
             "name": "[parameters('storageAccountName')]",
             "location": "[parameters('location')]",
             "sku": {
-                "name": "[parameters('storageAccountType')]"
+                "name": "Standard_LRS"
             },
             "kind": "StorageV2",
-            "properties": {}
+            "properties": {
+                "accessTier": "Hot"
+            }
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('storageAccountName'), '/default/input')]",
+            "apiVersion": "2022-05-01",
+            "name": "[format('{0}/default/{1}', parameters('storageAccountName'), parameters('containerName'))]",
             "dependsOn": [
-                "[parameters('storageAccountName')]"
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
             ]
         }
-    ],
-    "outputs": {
-        "storageAccountName": {
-            "type": "String",
-            "value": "[parameters('storageAccountName')]"
-        },
-        "storageAccountId": {
-            "type": "String",
-            "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
-        }
-    }
+    ]
 }
