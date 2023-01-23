@@ -10,6 +10,9 @@
         },
         "storageAccountName": {
             "value": "sidstorek4ux2tuy7x"
+        },
+        "containerPrefix": {
+            "value": "sidcontainer21"
         }
     }
 }
