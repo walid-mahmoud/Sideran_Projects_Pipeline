@@ -18,7 +18,10 @@
             "value": "StorageV2"
         },
         "storageContainer_name": {
-            "value": "storagecontainerfromarm"
-        }
-    }
+            "name": "[variables('storageName')]",        }
+    },
+   "variables": {
+        "storageName": "[toLower( concat( parameters('storageContainer_name'), uniqueString(resourceGroup().id) ) )]",
+        "location": "[resourceGroup().location]"
+  },
 }
