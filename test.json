@@ -27,7 +27,7 @@
             "metadata": {
                 "description": "One of the supported SKUs: Standard_LRS, Standard_GRS, Standard_RAGRS, Standard_ZRS, Premium_LRS"
             },
-            "defaultValue": "Standard_GRS"
+            "defaultValue": "Standard_LRS"
         },
         "storageAccount_access_tier": {
             "type": "string",
